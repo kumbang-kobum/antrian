@@ -1,0 +1,40 @@
+/* CSS Global untuk semua halaman */
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Credit Footer */
+.cc {
+  position: fixed;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: rgba(255,255,255,0.8);
+  font-family: Arial, Helvetica, sans-serif;
+  z-index: 999;
+  text-align: center;
+  white-space: nowrap;
+}
+.cc a {
+  color: inherit;
+  text-decoration: none;
+}
+.cc a:hover {
+  text-decoration: underline;
+}
+
+.btn-home {
+  display:inline-block;
+  padding:8px 16px;
+  border-radius:8px;
+  background:#2196f3;
+  color:#fff;
+  font-weight:600;
+  text-decoration:none;
+  transition:.2s;
+}
+.btn-home:hover {
+  background:#1976d2;
+}
