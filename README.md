@@ -1,7 +1,7 @@
 # Catatan Sistem Antrian — RSU Handayani Kotabumi
 
 > Dikembangkan oleh: Chandra Irawan, M.T.I  
-> Traktir Kopi : https://saweria.co/widgets/mediashare?streamKey=d10952e6fdb9a91be3b8cc95f50b126f
+> Traktir Kopi : https://saweria.co/KumbangKobum
 > Database utama: `antrian_db` | Database SIK (SIMRS Khanza): `sik`  
 > Stack: PHP 8, MariaDB 10.4, JavaScript (Vanilla)
 
