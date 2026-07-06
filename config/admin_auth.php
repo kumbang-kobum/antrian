@@ -9,7 +9,7 @@ $allowed = $env['ADMIN_IPS'] ?? [];
 
 // Jika daftar kosong, akses terbuka (mode development)
 if (!empty($allowed)) {
-  $client = $_SERVER['HTTP_X_FORWARDED_FOR']
+  $client = isset($_SERVER['HTTP_X_FORWARDED_FOR'])
     ? trim(explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])[0])
     : ($_SERVER['REMOTE_ADDR'] ?? '');
 

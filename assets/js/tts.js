@@ -5,7 +5,6 @@ let speakQueue = [];
 let isSpeaking = false;
 
 function speakIndo(text){
-  // Tambahkan teks ke antrian
   speakQueue.push(text);
   processQueue();
 }
@@ -17,30 +16,31 @@ function processQueue(){
     return;
   }
 
-  // Kalau sedang bicara, jangan ganggu → tunggu selesai
   if(isSpeaking) return;
 
   const nextText = speakQueue.shift();
-  if(!nextText) return; // antrian kosong
+  if(!nextText) return;
 
   isSpeaking = true;
 
   const u = new SpeechSynthesisUtterance(nextText);
 
-  // Cari voice Bahasa Indonesia kalau ada
+  // Cari voice perempuan Bahasa Indonesia; fallback ke voice Indo lainnya
   const voices = synth.getVoices();
-  let idn = voices.find(v => /id-|indones/i.test(v.lang));
-  if(idn) u.voice = idn;
+  const idnVoices = voices.filter(v => /id[-_]|indones/i.test(v.lang));
+  const femaleVoice = idnVoices.find(v => /female|woman|wanita|sri|sari|nessa/i.test(v.name))
+    || idnVoices.find(v => !/male|man|pria/i.test(v.name))
+    || idnVoices[0];
+  if (femaleVoice) u.voice = femaleVoice;
 
-  // Atur properti suara agar natural
-  u.rate = 0.95;   // sedikit pelan
-  u.pitch = 1.0;   // normal
-  u.volume = 1.0;  // penuh
+  // pitch mendekati 1.0 agar suara tidak bergetar; rate sedikit lambat agar jelas
+  u.rate   = 0.92;
+  u.pitch  = 1.05;
+  u.volume = 1.0;
 
-  // Event selesai bicara
   u.onend = () => {
     isSpeaking = false;
-    processQueue(); // lanjut ke teks berikutnya
+    processQueue();
   };
 
   u.onerror = (e) => {
@@ -53,10 +53,10 @@ function processQueue(){
 }
 
 /**
- * Fungsi tambahan: memecah kode jadi huruf per huruf agar lebih jelas
- * Contoh: "P0003" → "P 0 0 0 3"
+ * Pecah kode antrian jadi per karakter dengan jeda koma agar TTS
+ * tidak menembak cepat. Contoh: "P0001" → "P, 0, 0, 0, 1"
  */
 function ucapkanKode(kode){
   if(!kode) return '';
-  return kode.split('').join(' ');
+  return kode.split('').join(', ');
 }

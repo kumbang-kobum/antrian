@@ -148,8 +148,6 @@
       }
     }
 
-    function ucapkanKode(kode){ return kode.split('').join(' '); }
-
     enableSoundButton();
     loadDisplay();
     setInterval(loadDisplay, 2000);
