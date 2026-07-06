@@ -299,7 +299,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     btn.className = cls || 'k';
     btn.textContent = label;
     btn.addEventListener('mousedown', function(e) { e.preventDefault(); });
-    btn.addEventListener('click', handler);
+    btn.addEventListener('click', function(e) { e.stopPropagation(); handler(); });
     return btn;
   }
 
@@ -342,8 +342,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     activeInput = null;
   }
 
-  document.getElementById('kd_bpjs').addEventListener('focus', function() { openKbd(this); });
-  document.getElementById('no_urut').addEventListener('focus', function() { openKbd(this); });
+  /* focus: menangani saat tab-switch kembali ke halaman
+     click + stopPropagation: menangani klik pertama kali yang terkadang
+     tidak memicu focus pada input readonly di beberapa browser */
+  ['kd_bpjs', 'no_urut'].forEach(function(id) {
+    var el = document.getElementById(id);
+    el.addEventListener('focus', function() { openKbd(this); });
+    el.addEventListener('click', function(e) {
+      e.stopPropagation(); // cegah document handler menutup keyboard
+      openKbd(this);
+    });
+  });
 
   /* Tutup keyboard saat klik di luar form dan keyboard */
   document.addEventListener('click', function(e) {
