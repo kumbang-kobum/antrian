@@ -9,127 +9,15 @@ require_once '../config/admin_auth.php';
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Admin Panggil Antrian</title>
-  <link rel="stylesheet" href="style.css"/>
-  <style>
-    body {
-      margin:0;
-      font-family:'Segoe UI', Arial, sans-serif;
-      background: linear-gradient(135deg, #2b5876, #4e4376);
-      color:#f0f0f0;
-    }
-    .wrap {
-      padding:20px;
-      display:flex;
-      justify-content:center;
-    }
-    .card {
-      background:rgba(255,255,255,0.1);
-      backdrop-filter:blur(8px);
-      border-radius:16px;
-      padding:20px;
-      width:100%;
-      max-width:900px;
-      box-shadow:0 10px 30px rgba(0,0,0,0.3);
-    }
-    h2 {
-      margin-top:0;
-      font-size:24px;
-      font-weight:700;
-      text-align:center;
-      margin-bottom:20px;
-    }
-    .toolbar {
-      display:flex;
-      gap:16px;
-      align-items:center;
-      flex-wrap:wrap;
-      margin-bottom:16px;
-      background:rgba(0,0,0,0.2);
-      padding:12px 16px;
-      border-radius:12px;
-    }
-    label { font-size:14px; font-weight:500; }
-    select, button {
-      padding:8px 12px;
-      border-radius:8px;
-      border:none;
-      outline:none;
-    }
-    button {
-      cursor:pointer;
-      font-weight:600;
-      background:#2196f3;
-      color:#fff;
-      transition:.2s;
-    }
-    button:hover { filter:brightness(1.1); }
-
-    table {
-      width:100%;
-      border-collapse:collapse;
-      margin-top:10px;
-      background:rgba(0,0,0,0.25);
-      border-radius:12px;
-      overflow:hidden;
-    }
-    thead {
-      background:rgba(0,0,0,0.4);
-    }
-    th, td {
-      padding:12px;
-      text-align:left;
-      font-size:14px;
-    }
-    tbody tr:nth-child(even) {
-      background:rgba(255,255,255,0.05);
-    }
-    .act { display:flex; gap:8px; }
-    .btn-call {
-      background:#4caf50;
-      color:#fff;
-      border:none;
-      padding:6px 12px;
-      border-radius:6px;
-      cursor:pointer;
-      font-size:13px;
-    }
-    .btn-call:hover { background:#45a047; }
-    .btn-finish {
-      background:#f44336;
-      color:#fff;
-      border:none;
-      padding:6px 12px;
-      border-radius:6px;
-      cursor:pointer;
-      font-size:13px;
-    }
-    .btn-finish:hover { background:#e53935; }
-
-    .status-badge {
-      padding:4px 8px;
-      border-radius:12px;
-      font-size:12px;
-      font-weight:600;
-      text-transform:capitalize;
-    }
-    .status-menunggu { background:#ff9800; color:#fff; }
-    .status-dipanggil { background:#2196f3; color:#fff; }
-    .status-selesai { background:#4caf50; color:#fff; }
-
-    .pill {
-      padding:6px 10px;
-      border-radius:999px;
-      background:#223065;
-      color:#cfe2ff;
-      font-size:12px;
-      font-weight:600;
-    }
-  </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="card">
-      <h2>🗣️ Menu Panggil Antrian</h2>
+  <div class="admin-page">
+    <div class="admin-card card">
+      <div class="admin-header">
+        <h2>Panggil Antrian</h2>
+        <a href="../index.php" class="btn-home">← Beranda</a>
+      </div>
+
       <div class="toolbar">
         <label>Jenis:
           <select id="jenis">
@@ -144,25 +32,30 @@ require_once '../config/admin_auth.php';
             <option value="6">6</option><option value="7">7</option><option value="8">8</option>
           </select>
         </label>
-        <button onclick="refreshList()">🔄 Refresh</button>
+        <button class="btn btn-ghost btn-sm" onclick="refreshList()">↺ Refresh</button>
         <span id="info" class="pill">Ready</span>
-        <div style="text-align:center; margin-top:20px;">
-          <a href="../index.php" class="btn-home">🏠 Home</a>
-        </div>
       </div>
 
-      <table>
-        <thead>
-          <tr><th>No</th><th>Kode</th><th>Daftar</th><th>Status</th><th>Aksi</th></tr>
-        </thead>
-        <tbody id="tbody"></tbody>
-      </table>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Kode</th>
+              <th>Waktu Daftar</th>
+              <th>Status</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
   <script>
     const tbody = document.getElementById('tbody');
-    const info = document.getElementById('info');
+    const info  = document.getElementById('info');
 
     function esc(s) {
       const d = document.createElement('div');
@@ -170,34 +63,40 @@ require_once '../config/admin_auth.php';
       return d.innerHTML;
     }
 
+    function statusClass(s) {
+      if (s === 'menunggu')  return 'badge-menunggu';
+      if (s === 'dipanggil') return 'badge-dipanggil';
+      if (s === 'selesai')   return 'badge-selesai';
+      return '';
+    }
+
     async function refreshList(){
-      info.textContent='Loading...';
+      info.textContent = 'Memuat...';
       const jenis = document.getElementById('jenis').value;
       const r = await fetch(`../api/list_queue.php?jenis=${jenis}`);
       const d = await r.json();
       tbody.innerHTML = '';
-      d.data.forEach((row,idx)=>{
+      d.data.forEach((row, idx) => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td>${idx+1}</td>
-          <td><b>${esc(row.kode)}</b></td>
-          <td>${esc(row.created_at)}</td>
-          <td><span class="status-badge status-${esc(row.status)}">${esc(row.status)}</span></td>
-          <td class="act">
-            <button class="btn-call">Panggil</button>
-            <button class="btn-finish">Selesai</button>
+          <td style="color:var(--muted)">${idx+1}</td>
+          <td><strong>${esc(row.kode)}</strong></td>
+          <td style="color:var(--muted);font-size:13px">${esc(row.created_at)}</td>
+          <td><span class="badge ${statusClass(row.status)}">${esc(row.status)}</span></td>
+          <td style="display:flex;gap:6px">
+            <button class="btn btn-success btn-sm">Panggil</button>
+            <button class="btn btn-danger btn-sm">Selesai</button>
           </td>`;
-        tr.querySelector('.btn-call').addEventListener('click', () => call(row.id));
-        tr.querySelector('.btn-finish').addEventListener('click', () => finish(row.id));
+        tr.querySelector('.btn-success').addEventListener('click', () => call(row.id));
+        tr.querySelector('.btn-danger').addEventListener('click',  () => finish(row.id));
         tbody.appendChild(tr);
       });
-      info.textContent='Ready';
+      info.textContent = 'Ready';
     }
 
     async function call(id){
       const loket = document.getElementById('loket').value;
       const jenis = document.getElementById('jenis').value;
-
       if (jenis==='P' && !(loket>=1 && loket<=5)){
         alert('Antrian P hanya untuk loket 1–5.');
         return;
@@ -206,19 +105,14 @@ require_once '../config/admin_auth.php';
         alert('Antrian F hanya untuk loket 6–8.');
         return;
       }
-
       const r = await fetch('../api/call.php',{
         method:'POST',
         headers:{'Content-Type':'application/json'},
         body: JSON.stringify({ id, loket })
       });
       const d = await r.json();
-      if(d.ok){
-        // suara tidak lagi dipanggil di admin
-        refreshList();
-      } else {
-        alert('Gagal memanggil: '+d.msg);
-      }
+      if(d.ok){ refreshList(); }
+      else { alert('Gagal memanggil: '+d.msg); }
     }
 
     async function finish(id){
@@ -229,9 +123,8 @@ require_once '../config/admin_auth.php';
         body: JSON.stringify({id})
       });
       const d = await r.json();
-      if(d.ok){
-        refreshList();
-      } else alert('Gagal: '+d.msg);
+      if(d.ok){ refreshList(); }
+      else { alert('Gagal: '+d.msg); }
     }
 
     refreshList();
@@ -239,7 +132,7 @@ require_once '../config/admin_auth.php';
   </script>
 
   <div class="cc">
-    © <?=date('Y')?> Chandra Irawan,M.T.I — Sistem Antrian RSU Handayani Kotabumi
+    © <?=date('Y')?> Chandra Irawan, M.T.I — Sistem Antrian RSU Handayani Kotabumi
   </div>
 </body>
 </html>

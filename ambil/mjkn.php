@@ -104,107 +104,108 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Antrian MJKN</title>
   <link rel="stylesheet" href="../assets/css/global.css">
+  <link rel="stylesheet" href="../assets/css/global.css">
   <style>
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       display: flex; min-height: 100vh;
       align-items: center; justify-content: center;
-      margin: 0;
-      background: linear-gradient(135deg, #e65100, #ff8f00);
+      background: linear-gradient(150deg, #0077b6 0%, #00b4d8 45%, #caf0f8 80%, #fff 100%) fixed;
       transition: align-items .3s, padding .3s;
+      /* override tokens untuk konteks terang */
+      --surface:   rgba(255,255,255,0.86);
+      --surface-2: rgba(255,255,255,0.6);
+      --border:    rgba(0, 100, 160, 0.15);
+      --text:      #1a2e44;
+      --muted:     #4e7090;
+      color: var(--text);
     }
-    body.kbd-open {
-      align-items: flex-start;
-      padding-top: 28px;
-    }
+    body.kbd-open { align-items: flex-start; padding-top: 28px; }
+
     .wrap {
       max-width: 440px; width: 92%;
-      background: rgba(255,255,255,.15);
-      backdrop-filter: blur(10px);
+      background: var(--surface);
+      border: 1px solid var(--border);
       border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.25);
-      padding: 28px 24px; text-align: center; color: #fff;
+      box-shadow: 0 4px 36px rgba(0,80,160,0.14);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      padding: 28px 24px; text-align: center;
     }
-    h1  { margin: 0 0 4px; font-size: 24px; font-weight: 800; }
-    p   { color: #ffe0b2; margin: 0 0 18px; font-size: 14px; }
+    h1  { font-size: 22px; margin: 0 0 4px; color: var(--text); }
+    p   { color: var(--muted); margin: 0 0 18px; font-size: 14px; }
 
-    /* Baris input: dua kotak + separator */
     .input-row {
       display: flex; align-items: center;
       justify-content: center; gap: 10px;
     }
-    .input-wrap {
-      display: flex; flex-direction: column; align-items: center; gap: 4px;
-    }
+    .input-wrap { display: flex; flex-direction: column; align-items: center; gap: 4px; }
     .input-wrap label {
-      font-size: 11px; font-weight: 700; opacity: .8; letter-spacing: 1px;
+      font-size: 10px; font-weight: 700; color: var(--muted);
+      letter-spacing: 1px; text-transform: uppercase;
     }
     .input-row input {
       padding: 14px 8px; font-size: 22px; font-weight: 800;
-      border: 2px solid transparent; border-radius: 12px;
-      background: rgba(255,255,255,.9); color: #333;
+      border: 2px solid var(--border); border-radius: 10px;
+      background: var(--surface-2); color: var(--text);
       outline: none; text-align: center; text-transform: uppercase;
-      transition: border-color .2s;
-      cursor: pointer;
+      transition: border-color .2s; cursor: pointer; font-family: inherit;
     }
-    .input-row input.active {
-      border-color: #fff;
-      background: #fff;
-    }
+    .input-row input.active { border-color: #0077b6; box-shadow: 0 0 0 3px rgba(0,119,182,.12); }
     #kd_bpjs { width: 110px; letter-spacing: 4px; }
     #no_urut  { width: 80px;  letter-spacing: 3px; }
-    .sep { font-size: 30px; font-weight: 900; color: #fff; margin-top: 18px; }
+    .sep { font-size: 28px; font-weight: 900; color: var(--muted); margin-top: 18px; }
 
-    .hint {
-      margin: 10px 0 0; font-size: 12px; color: #ffe0b2;
-    }
+    .hint  { margin: 10px 0 0; font-size: 12px; color: var(--muted); }
     .btn-submit {
-      margin-top: 18px; width: 100%; padding: 15px;
-      background: #fff; color: #e65100;
-      border: none; border-radius: 12px;
-      font-size: 17px; font-weight: 800; cursor: pointer;
-      transition: opacity .2s;
+      margin-top: 18px; width: 100%; padding: 14px;
+      background: linear-gradient(135deg, #0077b6, #00b4d8); color: #fff;
+      border: none; border-radius: 10px;
+      font-size: 16px; font-weight: 700; cursor: pointer;
+      font-family: inherit; transition: filter .2s;
+      box-shadow: 0 4px 14px rgba(0,119,182,.3);
     }
-    .btn-submit:hover { opacity: .9; }
+    .btn-submit:hover { filter: brightness(1.08); }
     .error {
       margin-top: 16px; padding: 12px;
-      background: rgba(255,255,255,.2);
-      border-radius: 10px; font-size: 14px; color: #fff4e5;
+      background: rgba(255,123,114,.08);
+      border: 1px solid rgba(255,123,114,.25);
+      border-radius: 10px; font-size: 14px; color: #c0392b;
     }
     .back {
       display: inline-block; margin-bottom: 16px;
-      color: #ffe0b2; font-size: 14px; text-decoration: none;
+      color: var(--muted); font-size: 14px;
     }
-    .back:hover { color: #fff; }
+    .back:hover { color: var(--text); }
 
     /* Virtual keyboard */
     #kbd {
       position: fixed; bottom: 0; left: 0; right: 0;
-      background: #1a1a2e;
+      background: rgba(240,248,255,0.96);
+      border-top: 1px solid rgba(0,100,160,0.15);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       padding: 12px 10px 20px;
-      box-shadow: 0 -4px 20px rgba(0,0,0,.4);
-      display: none;
-      z-index: 999;
+      box-shadow: 0 -4px 20px rgba(0,80,160,0.12);
+      display: none; z-index: 999;
     }
     #kbd.show { display: block; }
-    .kbd-row {
-      display: flex; justify-content: center;
-      gap: 6px; margin-bottom: 6px;
-    }
+    .kbd-row { display: flex; justify-content: center; gap: 6px; margin-bottom: 6px; }
     .kbd-row .k {
-      min-width: 44px; height: 52px;
-      background: #2d2d4e; color: #fff;
-      border: none; border-radius: 8px;
-      font-size: 18px; font-weight: 700;
+      min-width: 44px; height: 50px;
+      background: #fff; color: #1a2e44;
+      border: 1px solid rgba(0,100,160,0.18); border-radius: 8px;
+      font-size: 17px; font-weight: 700;
       cursor: pointer; flex: 1; max-width: 60px;
       display: flex; align-items: center; justify-content: center;
-      transition: background .1s;
+      transition: background .1s, border-color .1s;
       -webkit-tap-highlight-color: transparent;
+      font-family: inherit;
+      box-shadow: 0 1px 3px rgba(0,0,0,.06);
     }
-    .kbd-row .k:active { background: #e65100; }
-    .kbd-row .k.wide   { max-width: 120px; font-size: 15px; background: #3a3a5c; }
-    .kbd-row .k.submit { max-width: 160px; background: #e65100; }
-    .kbd-row .k.del    { background: #7b1fa2; }
+    .kbd-row .k:active { background: #0077b6; color: #fff; border-color: #0077b6; }
+    .kbd-row .k.wide   { max-width: 120px; font-size: 14px; background: #f0f7ff; }
+    .kbd-row .k.submit { max-width: 160px; background: linear-gradient(135deg,#0077b6,#00b4d8); color:#fff; border-color: #0077b6; }
+    .kbd-row .k.del    { background: #fff0f0; color: #c0392b; border-color: rgba(192,57,43,.2); }
   </style>
 </head>
 <body>
