@@ -30,7 +30,8 @@ SET time_zone = "+00:00";
 CREATE TABLE `antrian` (
   `id` int(11) NOT NULL,
   `tgl` date NOT NULL,
-  `jenis` enum('P','F') NOT NULL,
+  `jenis` enum('P','F','M') NOT NULL,
+  `no_reg_mjkn` varchar(20) DEFAULT NULL COMMENT 'Format: KD_BPJS-NOURUT, contoh ANA-3. NULL = pasien walk-in.',
   `nomor` int(11) NOT NULL,
   `status` enum('menunggu','dipanggil','selesai') NOT NULL DEFAULT 'menunggu',
   `loket` tinyint(4) DEFAULT NULL,
@@ -74,7 +75,7 @@ INSERT INTO `antrian` (`id`, `tgl`, `jenis`, `nomor`, `status`, `loket`, `create
 --
 
 CREATE TABLE `last_called` (
-  `jenis` enum('P','F') NOT NULL,
+  `jenis` enum('P','F','M') NOT NULL,
   `kode` varchar(10) NOT NULL,
   `loket` tinyint(4) DEFAULT NULL,
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
@@ -86,7 +87,8 @@ CREATE TABLE `last_called` (
 
 INSERT INTO `last_called` (`jenis`, `kode`, `loket`, `updated_at`) VALUES
 ('P', 'P0008', 1, '2025-09-24 08:44:36'),
-('F', 'F0007', 8, '2025-09-24 08:43:51');
+('F', 'F0007', 8, '2025-09-24 08:43:51'),
+('M', '-',    NULL, '2025-09-24 08:00:00');
 
 --
 -- Indexes for dumped tables
@@ -97,7 +99,8 @@ INSERT INTO `last_called` (`jenis`, `kode`, `loket`, `updated_at`) VALUES
 --
 ALTER TABLE `antrian`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `tgl` (`tgl`,`jenis`,`status`);
+  ADD KEY `tgl` (`tgl`,`jenis`,`status`),
+  ADD UNIQUE KEY `uq_mjkn_per_hari` (`tgl`,`no_reg_mjkn`);
 
 --
 -- Indexes for table `last_called`

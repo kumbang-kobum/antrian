@@ -14,9 +14,10 @@ $tgl = date('Y-m-d');
 $resp = [
   'last' => [
     'P' => ['kode' => '-', 'loket' => null, 'updated_at' => null],
+    'M' => ['kode' => '-', 'loket' => null, 'updated_at' => null],
     'F' => ['kode' => '-', 'loket' => null, 'updated_at' => null]
   ],
-  'waiting' => ['P' => [], 'F' => []],
+  'waiting' => ['P' => [], 'M' => [], 'F' => []],
   'time' => date('H:i')
 ];
 
@@ -41,22 +42,23 @@ if ($res) {
    Daftar menunggu dari tabel antrian
    ======================== */
 $stmt = $conn->prepare("
-  SELECT id, nomor, created_at 
-  FROM antrian 
-  WHERE tgl=? AND jenis=? AND status='menunggu' 
+  SELECT id, nomor, jenis, no_reg_mjkn, created_at
+  FROM antrian
+  WHERE tgl=? AND jenis=? AND status='menunggu'
   ORDER BY id ASC LIMIT 20
 ");
 if ($stmt) {
-  foreach (['P','F'] as $J) {
+  foreach (['P','M','F'] as $J) {
     $stmt->bind_param('ss', $tgl, $J);
     $stmt->execute();
     $q = $stmt->get_result();
     $tmp = [];
     while ($d = $q->fetch_assoc()) {
       $tmp[] = [
-        'id' => (int)$d['id'],
-        'kode' => $J . str_pad($d['nomor'], 4, '0', STR_PAD_LEFT),
-        'created_at' => date('H:i', strtotime($d['created_at']))
+        'id'          => (int)$d['id'],
+        'kode'        => $J . str_pad($d['nomor'], 4, '0', STR_PAD_LEFT),
+        'no_reg_mjkn' => $d['no_reg_mjkn'],
+        'created_at'  => date('H:i', strtotime($d['created_at']))
       ];
     }
     $resp['waiting'][$J] = $tmp;

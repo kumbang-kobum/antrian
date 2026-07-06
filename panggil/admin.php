@@ -1,3 +1,7 @@
+<?php
+require_once '../config/database.php';
+require_once '../config/admin_auth.php';
+?>
 <!doctype html>
 <html lang="id">
 <head>
@@ -160,6 +164,12 @@
     const tbody = document.getElementById('tbody');
     const info = document.getElementById('info');
 
+    function esc(s) {
+      const d = document.createElement('div');
+      d.textContent = s ?? '';
+      return d.innerHTML;
+    }
+
     async function refreshList(){
       info.textContent='Loading...';
       const jenis = document.getElementById('jenis').value;
@@ -170,19 +180,21 @@
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${idx+1}</td>
-          <td><b>${row.kode}</b></td>
-          <td>${row.created_at}</td>
-          <td><span class="status-badge status-${row.status}">${row.status}</span></td>
+          <td><b>${esc(row.kode)}</b></td>
+          <td>${esc(row.created_at)}</td>
+          <td><span class="status-badge status-${esc(row.status)}">${esc(row.status)}</span></td>
           <td class="act">
-            <button class="btn-call" onclick="call(${row.id}, '${row.kode}')">Panggil</button>
-            <button class="btn-finish" onclick="finish(${row.id})">Selesai</button>
+            <button class="btn-call">Panggil</button>
+            <button class="btn-finish">Selesai</button>
           </td>`;
+        tr.querySelector('.btn-call').addEventListener('click', () => call(row.id));
+        tr.querySelector('.btn-finish').addEventListener('click', () => finish(row.id));
         tbody.appendChild(tr);
       });
       info.textContent='Ready';
     }
 
-    async function call(id, kode){
+    async function call(id){
       const loket = document.getElementById('loket').value;
       const jenis = document.getElementById('jenis').value;
 

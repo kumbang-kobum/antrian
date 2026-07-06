@@ -1,4 +1,7 @@
-<?php /* Admin khusus antrian Fisioterapi (Loket 6–8) */ ?>
+<?php
+require_once '../config/database.php';
+require_once '../config/admin_auth.php';
+?>
 <!doctype html>
 <html lang="id">
 <head>

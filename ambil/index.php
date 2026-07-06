@@ -66,6 +66,7 @@
 
     .p {background:#2196f3;color:#fff;}
     .f {background:#4caf50;color:#fff;}
+    .m {background:#ff6f00;color:#fff;}
 
     a.btn span {
       display:block;
@@ -102,6 +103,13 @@
       <a class="btn f" href="simpan.php?jenis=F">
         <span>💪</span>
         Pendaftaran Pasien Fisioterapi<br>(Loket 6–8)
+      </a>
+    </div>
+
+    <div style="margin-top:18px">
+      <a class="btn m" href="mjkn.php" style="display:flex;flex-direction:column;align-items:center;padding:18px 14px;border-radius:12px;text-decoration:none;font-weight:700;font-size:15px;box-shadow:0 4px 12px rgba(0,0,0,.2);transition:all .25s ease;">
+        <span style="font-size:30px;margin-bottom:8px;">📱</span>
+        Ambil Antrian MJKN<br><small style="font-weight:400;opacity:.85">Sudah daftar via Mobile JKN</small>
       </a>
     </div>
 
