@@ -41,8 +41,8 @@
     </div>
 
     <div class="nav-section" style="margin-bottom:0">
-      <div class="nav-section-label">Panel Admin</div>
-      <div class="nav-grid-3">
+      <div class="nav-section-label">Panel Admin & Pengaturan</div>
+      <div class="nav-grid">
         <a class="nav-btn nav-green" href="panggil/admin.php">
           <span class="icon">🗣️</span>
           Admin Gabungan
@@ -54,6 +54,10 @@
         <a class="nav-btn nav-green" href="panggil/admin_fisioterapi.php">
           <span class="icon">🗣️</span>
           Admin Fisioterapi
+        </a>
+        <a class="nav-btn nav-blue" href="panggil/upload_video.php">
+          <span class="icon">🎬</span>
+          Upload Video Display
         </a>
       </div>
     </div>
